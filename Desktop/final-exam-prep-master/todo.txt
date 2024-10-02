@@ -1,0 +1,27 @@
+```json
+[
+    {'date': '22/09/2024', 'action': 'Ôn lại Chương 1: Tập trung vào loại câu hỏi 2 và 3, làm lại bài 02, 03, 07.', 'done': 'false'},
+    {'date': '23/09/2024', 'action': 'Ôn lại Chương 2: Tập trung vào loại câu hỏi 1 và 3, làm lại bài 02, 03, 04.', 'done': 'false'},
+    {'date': '24/09/2024', 'action': 'Ôn lại Chương 3: Tập trung vào loại câu hỏi 2, làm lại bài 01, 02, 06.', 'done': 'false'},
+    {'date': '25/09/2024', 'action': 'Ôn lại Chương 4: Tập trung vào loại câu hỏi 3, làm lại bài 01, 04, 06.', 'done': 'false'},
+    {'date': '26/09/2024', 'action': 'Ôn lại Chương 5: Tập trung vào loại câu hỏi 1 và 3, làm lại bài 02, 03, 07.', 'done': 'false'},
+    {'date': '27/09/2024', 'action': 'Ôn lại Chương 6: Tập trung vào loại câu hỏi 1 và 3, làm lại các bài đã sai.', 'done': 'false'},
+    {'date': '28/09/2024', 'action': 'Ôn lại Chương 7: Tập trung vào loại câu hỏi 0 và 1, làm lại các bài đã sai.', 'done': 'false'},
+    {'date': '29/09/2024', 'action': 'Thực hiện chức năng Wrong question searching: Ôn tập lại tất cả các bài đã sai.', 'done': 'false'},
+    {'date': '30/09/2024', 'action': 'Thực hiện Analytic review: Xem lại phân tích từ các bài test trước.', 'done': 'false'},
+    {'date': '01/10/2024', 'action': 'Bắt đầu ôn tập cho Chương 8: Nắm bắt nội dung chương 8.', 'done': 'false'},
+    {'date': '02/10/2024', 'action': 'Ôn lại các kiến thức đã học từ các chương trước, tập trung vào các câu hỏi hay sai.', 'done': 'false'},
+    {'date': '03/10/2024', 'action': 'Làm bài test chương 8.', 'done': 'false'},
+    {'date': '04/10/2024', 'action': 'Ôn tập lại những nội dung còn yếu từ chương 1 đến chương 7.', 'done': 'false'},
+    {'date': '05/10/2024', 'action': 'Thực hiện Practice test recommendation: Làm bài test luyện tập từ những nội dung đã sai.', 'done': 'false'},
+    {'date': '06/10/2024', 'action': 'Tiếp tục ôn tập cho các chương yếu, chú ý đến loại câu hỏi hay sai.', 'done': 'false'},
+    {'date': '07/10/2024', 'action': 'Ôn tập lại các bài đã sai trong chương 4 và 5.', 'done': 'false'},
+    {'date': '08/10/2024', 'action': 'Ôn tập lại các bài đã sai trong chương 6 và 7.', 'done': 'false'},
+    {'date': '09/10/2024', 'action': 'Thực hiện chức năng Wrong question searching: Ôn tập lại tất cả các bài đã sai.', 'done': 'false'},
+    {'date': '10/10/2024', 'action': 'Thực hiện Analytic review: Xem lại phân tích từ các bài test trước.', 'done': 'false'},
+    {'date': '11/10/2024', 'action': 'Ôn tập lại tất cả các chương một lần nữa, chú ý đến các nội dung khó.', 'done': 'false'},
+    {'date': '12/10/2024', 'action': 'Ôn tập tổng quát: Tập trung vào các điểm yếu đã chỉ ra.', 'done': 'false'},
+    {'date': '13/10/2024', 'action': 'Chuẩn bị cho bài test tổng: Làm bài test thử từ các nội dung đã học.', 'done': 'false'},
+    {'date': '14/10/2024', 'action': 'Làm bài test tổng.', 'done': 'false'}
+]
+```
