@@ -5,7 +5,9 @@ from typing import List
 from collections import Counter
 from typing import List, Dict,Any
 import numpy as np
-from utils.utils import preprocess_sentence
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils')))
+from utils import preprocess_sentence
 
 class Vision_Encode_Obj_Feature(nn.Module):
     def __init__(self, config: Dict):
@@ -17,7 +19,7 @@ class Vision_Encode_Obj_Feature(nn.Module):
         self.d_obj=config['obj_embedding']['d_obj']
         self.d_grid=config['obj_embedding']['d_grid']
         self.use_attr=config['obj_embedding']['use_attr']
-         
+        
     def forward(self, images: List[str]):
         obj_info = [self.load_obj_features(image_id) for image_id in images]
         return obj_info
@@ -54,7 +56,7 @@ class Vision_Encode_Obj_Feature(nn.Module):
         
     def load_obj_features(self, image_id: int) -> Dict[str, Any]:
         image_id = os.path.basename(image_id).split('.')[0]
-        feature_file = os.path.join(self.obj_features_path, f"{int(image_id)}.npy")
+        feature_file = os.path.join(self.obj_features_path, f"{image_id}.npy")
         if os.path.exists(feature_file):
             features = np.load(feature_file, allow_pickle=True)[()]
             for key, feature in features.items():
@@ -107,3 +109,15 @@ class Vision_Encode_Obj_Feature(nn.Module):
 
             }
         return obj_info
+
+# import yaml
+# config_path = 'config/test.yaml'
+# with open(config_path) as conf_file:
+#     config = yaml.safe_load(conf_file)
+
+# test = Vision_Encode_Obj_Feature(config)
+# for i in range(11):
+#     print(i)
+#     a = test.load_obj_features(f'{i}')['object_list']
+#     print(a)
+    

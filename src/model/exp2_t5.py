@@ -41,9 +41,9 @@ class T5_VQA_Model(nn.Module):
             for ocr,obj in zip(ocr_info,obj_info):
                 ocr_obj_list.append(f"{ocr['texts']} {obj['object_list']}".strip())
             inputs = self.text_encoder(questions,ocr_obj_list,labels)
-            inputs.update({'image_features':image_features,
-                            'ocr_info': ocr_info,
-                            'obj_info':obj_info})
+            inputs.update({
+                            'ocr_info': ocr_info
+                            })
         else:   
             inputs = self.text_encoder(questions,None,labels)
         

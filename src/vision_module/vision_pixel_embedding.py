@@ -16,7 +16,7 @@ class Vision_Embedding(nn.Module):
         self.visual_encoding = Vision_Encode_Pixel(config)
         for param in self.visual_embedding.parameters():
             param.requires_grad = False
-
+    
     def forward(self, image_ids: List[str]):
         pixels=self.visual_encoding(image_ids)
         featrues=self.visual_embedding(pixels).last_hidden_state

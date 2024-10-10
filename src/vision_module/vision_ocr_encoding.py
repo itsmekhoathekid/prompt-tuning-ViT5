@@ -5,8 +5,11 @@ from typing import List
 from typing import List, Dict,Any
 import numpy as np
 import scipy.spatial.distance as distance
-from utils.utils import remove_vietnamese_accents, word_segmentation
+# from utils.utils import remove_vietnamese_accents, word_segmentation
 import random
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils')))
+from utils import remove_vietnamese_accents, word_segmentation
 
 class Vision_Encode_Ocr_Feature(nn.Module):
     def __init__(self, config: Dict):
@@ -108,7 +111,7 @@ class Vision_Encode_Ocr_Feature(nn.Module):
     
     def load_ocr_features(self, image_id: int) -> Dict[str, Any]:
         image_id = os.path.basename(image_id).split('.')[0]
-        feature_file = os.path.join(self.ocr_features_path, f"{int(image_id)}.npy")
+        feature_file = os.path.join(self.ocr_features_path, f"{image_id}.npy")
         features = np.load(feature_file, allow_pickle=True)[()]
         if os.path.exists(feature_file):
             for key, feature in features.items():
@@ -121,7 +124,7 @@ class Vision_Encode_Ocr_Feature(nn.Module):
                 features['det_features'] = features['det_features'][random_indices]
                 features['rec_features'] = features['rec_features'][random_indices]
                 features['boxes'] = features['boxes'][random_indices]
-                features['texts'] = [features['texts'][idx] for idx in new_ids]
+                features['texts'] = [features['texts'][idx] for idx in random_indices]
 
             if self.sort_type=='score':
                 features['scores']=torch.tensor(features['scores'])
@@ -154,12 +157,7 @@ class Vision_Encode_Ocr_Feature(nn.Module):
                 features['rec_features'] = self.pad_tensor(features['rec_features'], self.max_scene_text, 0.)
                 features['boxes'] = self.pad_tensor(features['boxes'], self.max_scene_text, 0.)
             
-            if self.use_word_seg:
-                texts = word_segmentation(' '.join(features['texts']))
-                texts = ' '.join(texts)
-                texts = texts.split() 
-            else:
-                texts=features['texts']
+            texts=features['texts']
 
             if self.max_scene_text==0:
                 texts = ''
@@ -178,10 +176,19 @@ class Vision_Encode_Ocr_Feature(nn.Module):
             ocr_info={
                     "det_features": features["det_features"].float().detach().cpu(),
                     "rec_features": features["rec_features"].float().detach().cpu(),
-                    "texts": remove_vietnamese_accents(texts,self.remove_accents_rate),
+                    "texts": texts,
                     "boxes": features["boxes"].float().detach().cpu(),
                     'height': features['height'],
                     'width': features['weight'],
                     }
         return ocr_info
 
+# import yaml
+# config_path = 'config/test.yaml'
+# with open(config_path) as conf_file:
+#     config = yaml.safe_load(conf_file)
+# test = Vision_Encode_Ocr_Feature(config)
+# for i in range(11):
+#     print(i)
+#     a = test.load_ocr_features(f'{i}')['texts']
+#     print(a)

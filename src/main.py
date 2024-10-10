@@ -22,6 +22,7 @@ def main(config_path: Text) -> None:
     task_infer=Predict(config)
     task_infer.predict_submission()
     logging.info('task done!!!')
+    
 if __name__ == '__main__':
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--config', dest='config', required=True)

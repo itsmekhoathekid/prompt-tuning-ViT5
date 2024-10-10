@@ -6,7 +6,7 @@ from utils.utils import preprocess_sentence, remove_vietnamese_accents, word_seg
 
 class VQA_dataset(Dataset):
     def __init__(self, annotation_path, image_path, remove_accents_rate=0, use_word_seg=False, with_answer=True):
-        with open(annotation_path, 'r') as file:
+        with open(annotation_path, 'r',encoding='utf-8') as file:
             json_data = json.load(file)
         
         self.annotations = self.load_annotations(json_data, image_path, remove_accents_rate, use_word_seg, with_answer)

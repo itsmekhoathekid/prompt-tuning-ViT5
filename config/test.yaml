@@ -1,0 +1,34 @@
+train:
+  output_dir: checkpoint
+  cuda_device: cuda:0
+  precision: float32
+  with_image: True
+  seed: 12345
+  num_train_epochs: 10
+  patience: 5
+  learning_rate: 3.0e-5
+  weight_decay: 1.0e-4
+  metric_for_best_model: em
+  per_device_train_batch_size: 16
+  per_device_valid_batch_size: 16
+
+obj_embedding:
+  path_obj: data/vinvl_vinvl
+  use_attr: False # the  max_input_length should be set 300 if True else 100
+  max_bbox: 32 #if not use, set 0
+  d_obj: 2048
+  d_grid: 1024  
+
+ocr_embedding:
+  sort_type: top-left bottom-right # score or top-left bottom-right
+  path_ocr: data/swintext_spotter
+  threshold: 0.3
+  remove_accents_rate: 0
+  use_word_seg: False
+  max_scene_text: 32 #if not use, set 0
+  d_det: 256
+  d_rec: 256
+  max_2d_position_embeddings: 1024
+
+model:
+  type_model: visionreader_t5

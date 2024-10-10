@@ -34,16 +34,17 @@ class T5_VQA_Model(nn.Module):
         }
     def forward(self, questions: List[str], images: List[str], labels: List[str] = None):
         if self.with_image:
-            image_features = self.vision_embedding(images)
+            #image_features = self.vision_embedding(images)
             ocr_info = self.vision_encoder_ocr(images)
             obj_info = self.vision_encoder_obj(images)
             ocr_obj_list=[]
             for ocr,obj in zip(ocr_info,obj_info):
                 ocr_obj_list.append(f"{ocr['texts']} {obj['object_list']}".strip())
             inputs = self.text_encoder(questions,ocr_obj_list,labels)
-            inputs.update({'image_features':image_features,
+            inputs.update({
                             'ocr_info': ocr_info,
-                            'obj_info':obj_info})
+                            'obj_info':obj_info
+                            })
         else:   
             inputs = self.text_encoder(questions,None,labels)
         
