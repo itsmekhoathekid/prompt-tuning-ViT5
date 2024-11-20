@@ -1,0 +1,92 @@
+from typing import List, Dict, Optional
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from text_module.visionreader_t5_encoding import T5_Encode_Feature, T5_Embedding
+from vision_module.vision_obj_encoding import  Vision_Encode_Obj_Feature
+from vision_module.vision_ocr_encoding import Vision_Encode_Ocr_Feature
+from vision_module.vision_pixel_embedding import Vision_Embedding, Vision_Embedding_Extracted
+from transformers import AutoConfig, AutoTokenizer
+from peft import PeftModel, PeftConfig, PeftType, PrefixEncoder
+from types import SimpleNamespace
+
+class T5_VQA_Model_exp2(nn.Module):
+    def __init__(self,config: Dict, peft_config: Optional[PeftConfig] = None):
+     
+        super(T5_VQA_Model_exp2, self).__init__()
+        # self.config = SimpleNamespace(**config)
+        self.text_encoder = T5_Encode_Feature(config)
+        if config['vision_embedding']['already_extracted']:
+            self.vision_embedding = Vision_Embedding_Extracted(config)
+        else:
+            self.vision_embedding = Vision_Embedding(config)
+        self.vision_encoder_ocr = Vision_Encode_Ocr_Feature(config)
+        self.vision_encoder_obj = Vision_Encode_Obj_Feature(config)
+        self.cuda_device=config['train']['cuda_device']
+        self.device = torch.device(f'{self.cuda_device}' if torch.cuda.is_available() else 'cpu')
+        self.tokenizer = AutoTokenizer.from_pretrained(config['text_embedding']['text_encoder'])
+        self.embedding = T5_Embedding(config)
+        self.with_image = config['train']['with_image']
+        self.generator_args ={
+            'max_length': config['generator_args']['max_length'],
+            'min_length': config['generator_args']['min_length'],
+            'num_beams': config['generator_args']['num_beams'],
+            'length_penalty': config['generator_args']['length_penalty'],
+            'no_repeat_ngram_size': config['generator_args']['no_repeat_ngram_size'],
+            'early_stopping': config['generator_args']['early_stopping'],
+        }
+
+        # self.peft_model = PeftModel(self.embedding, peft_config) if peft_config else None
+
+        # # Khởi tạo PrefixEncoder nếu được cấu hình
+        # self.prefix_encoder = PrefixEncoder(peft_config) if peft_config and peft_config.peft_type == PeftType.PREFIX_TUNING else None
+
+        # # Chuyển mô hình sang thiết bị
+        # self.to(self.device)
+
+    def forward(self, questions: List[str], images: List[str], labels: List[str] = None):
+        if self.with_image:
+            image_features = self.vision_embedding(images)
+            ocr_info = self.vision_encoder_ocr(images)
+            obj_info = self.vision_encoder_obj(images)
+            ocr_obj_list=[]
+            for ocr,obj in zip(ocr_info,obj_info):
+                ocr_obj_list.append(f"{ocr['texts']} {obj['object_list']}".strip())
+            inputs = self.text_encoder(questions,ocr_obj_list,labels)
+            inputs.update({
+                            'ocr_info': ocr_info
+                            })
+        else:   
+            inputs = self.text_encoder(questions,None,labels)
+
+        # input_ids = inputs['input_ids']
+        # attention_mask = inputs['attention_mask']
+        # embedding_layer = self.embedding.get_input_embeddings()
+        # inputs_embeds = embedding_layer(input_ids)
+
+        # # Nếu có prefix encoder, thêm prefix tokens vào inputs_embeds
+        # if self.prefix_encoder is not None:
+        #     batch_size = len(questions)
+        #     prefix = torch.arange(batch_size, dtype=torch.long, device=self.device).unsqueeze(1)
+        #     prefix_tokens = self.prefix_encoder(prefix)
+
+        #     # Nối prefix tokens vào inputs_embeds
+        #     inputs_embeds = torch.cat([prefix_tokens, inputs_embeds], dim=1)
+
+        #     # Cập nhật attention_mask để khớp với chiều dài mới
+        #     prefix_length = prefix_tokens.size(1)
+        #     extended_attention_mask = torch.ones((batch_size, prefix_length), device=self.device)
+        #     attention_mask = torch.cat([extended_attention_mask, attention_mask], dim=1)
+
+        # # Cập nhật inputs với các giá trị mới
+        # inputs['inputs_embeds'] = inputs_embeds
+        # inputs['attention_mask'] = attention_mask
+        # inputs.pop('input_ids', None)  # Loại bỏ input_ids vì đã có inputs_embeds
+
+        if labels is not None:
+            outputs = self.embedding(**inputs)
+            return outputs.logits, outputs.loss
+        else:
+            pred_ids=self.embedding.generate(**inputs,**self.generator_args)
+            pred_tokens=self.tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
+            return pred_tokens
